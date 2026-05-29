@@ -1,55 +1,39 @@
 # Final Submission Checklist
 
-Use this checklist before submitting on or before 02 June 2026.
+## Keep
 
-## Required by Lab Project Document
+- [x] Lab project instruction file: `DIPLabproject.pdf`
+- [x] Main Google Colab notebook: `notebooks/Low_Light_Image_Enhancement_Colab_Submission.ipynb`
+- [x] Short README: `README.md`
+- [x] This checklist: `DELIVERABLE_CHECKLIST.md`
 
-- [x] IEEE format project report draft: `report/ieee_report.md`
-- [x] Report PDF: `report/ieee_report.pdf`
-- [x] Expanded Google Colab code notebook: `notebooks/Low_Light_Image_Enhancement_Colab_Submission.ipynb`
-- [x] Source code: `src/`, `run_enhancement.py`, `evaluate.py`, `app.py`
-- [ ] Research paper copy: place final selected paper PDF in `research/`
-- [x] Presentation slides: `slides/viva_slides.md`
-- [x] Presentation PDF: `slides/viva_slides.pdf`
-- [x] Output results/screenshots: `results/comparisons/`
-- [x] Histogram screenshots: `results/histograms/`
-- [x] Dataset details: `data/DATASET_DETAILS.md`
-- [x] Metrics table: `results/metrics.csv`
-- [x] Viva/demo app source: `app.py`
+## Submit
 
-## Replace Before Final Submission
+- [ ] Upload the notebook to Google Colab.
+- [ ] Run the notebook from top to bottom.
+- [ ] Use real low-light images, not only synthetic samples.
+- [ ] Download the notebook output ZIP from the final cell.
+- [ ] Export the executed notebook as `.ipynb` or PDF if sir asks for output evidence.
+- [ ] Add group member names inside the first notebook cell.
 
-- [ ] Download LOL dataset test images.
-- [ ] Put low-light images in `data/low_light/`.
-- [ ] Put paired reference images in `data/reference/`.
-- [ ] Capture 10-15 custom low-light images and put them in `data/custom_low_light/`.
-- [ ] Run final experiment on real images:
-
-```powershell
-python run_enhancement.py --input data\low_light --reference data\reference --output results
-python evaluate.py --results results\metrics.csv
-```
-
-- [ ] Add final screenshots from `results/comparisons/` into the report/slides.
-- [ ] Update author names in `report/ieee_report.md` and `slides/viva_slides.md`.
-- [ ] Add the exact selected research paper citation in IEEE format.
-
-## Three-Student Work Division
+## Three-Student Division
 
 Student 1:
 
-- Finalize research paper.
-- Explain HE, CLAHE, HSV/YCrCb, gamma correction, Retinex, LIME-style enhancement, and proposed method.
-- Own the notebook sections for enhancement algorithms and proposed hybrid method.
+- Enhancement algorithms
+- Proposed hybrid method
+- Methodology explanation
 
 Student 2:
 
-- Download/organize dataset.
-- Run experiments and collect screenshots.
-- Own metrics, ranking table, parameter study, and ablation study.
+- Dataset handling
+- Metrics
+- Parameter and ablation study
 
 Student 3:
 
-- Prepare report, slides, visualization screenshots, and demo.
-- Own comparison grids, histograms, CDF plots, channel maps, final ZIP export, and viva talking points.
-- Ensure final deliverables are packaged.
+- Visualizations
+- Result screenshots
+- ZIP export
+- Viva talking points
+
