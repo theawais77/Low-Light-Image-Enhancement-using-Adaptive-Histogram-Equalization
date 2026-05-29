@@ -1,0 +1,223 @@
+\documentclass[conference]{IEEEtran}
+
+\usepackage{cite}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{url}
+\usepackage{array}
+
+\begin{document}
+
+\title{Low-Light Image Enhancement Using Illumination Map Estimation and Adaptive Contrast Improvement}
+
+\author{
+\IEEEauthorblockN{Awais Tahir -- 232387 \quad Zain Ul Abideen -- 232420 \quad Abeera Zainab -- 232997}
+\IEEEauthorblockA{
+Department of Computer Science\\
+Air University\\
+Digital Image Processing Project\\
+Submitted to: Sir Abdullah}
+}
+
+\maketitle
+
+\begin{abstract}
+Low-light images often suffer from poor visibility, weak contrast, hidden details, and increased noise. These problems make it difficult to use such images in practical applications such as surveillance, traffic monitoring, indoor photography, and security systems. In this project, we studied and implemented the research paper ``LIME: Low-Light Image Enhancement via Illumination Map Estimation'' by Guo, Li, and Ling. The main idea of the paper is to estimate the illumination of an image, refine the illumination map, and then recover a brighter image using illumination correction. We implemented the LIME method in Python using OpenCV and compared it with common image enhancement methods such as histogram equalization, CLAHE, gamma correction, and Retinex-based enhancement. We also added a small improvement over the original method by applying denoising, adaptive gamma selection, and CLAHE-based contrast enhancement. The results are evaluated using visual comparison, histograms, brightness, contrast, entropy, runtime, and reference-based metrics such as MSE, PSNR, and SSIM when paired reference images are available.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Low-light image enhancement, LIME, illumination map, histogram equalization, CLAHE, Retinex, digital image processing.
+\end{IEEEkeywords}
+
+\section{Introduction}
+Digital images captured in weak illumination usually have dark regions, low contrast, and missing visual details. In many cases, the important objects are present in the image, but they are not clearly visible because the lighting condition is poor. This problem is common in night surveillance cameras, mobile phone photography, traffic monitoring, indoor rooms, parking areas, and security systems.
+
+The main problem in low-light enhancement is not only to make the image brighter. A good enhancement method should improve visibility while preserving natural colors and important details. If brightness is increased blindly, the output may become overexposed, noisy, or unnatural. Therefore, low-light image enhancement requires a careful balance between brightness improvement, contrast enhancement, detail preservation, and noise control.
+
+The motivation of this project is to study a real research paper related to Digital Image Processing and implement its methodology. We selected the LIME paper because it is directly related to low-light image enhancement and uses classical image processing concepts such as illumination estimation, filtering, enhancement, and image restoration. The objectives of this project are:
+
+\begin{itemize}
+    \item To study the selected LIME research paper and understand its main algorithm.
+    \item To implement the paper methodology using Python and OpenCV.
+    \item To compare LIME with other enhancement methods such as HE, CLAHE, gamma correction, and Retinex.
+    \item To add a small improvement over LIME using denoising, adaptive gamma, and CLAHE.
+    \item To evaluate the results using both visual and quantitative analysis.
+\end{itemize}
+
+\section{Selected Research Paper}
+The selected research paper for this project is:
+
+\begin{quote}
+X. Guo, Y. Li, and H. Ling, ``LIME: Low-Light Image Enhancement via Illumination Map Estimation,'' \textit{IEEE Transactions on Image Processing}, vol. 26, no. 2, pp. 982--993, 2017.
+\end{quote}
+
+The paper can be accessed through the following links:
+\begin{itemize}
+    \item DOI: \url{https://doi.org/10.1109/TIP.2016.2639450}
+    \item Public PDF: \url{https://www3.cs.stonybrook.edu/~hling/publication/LIME-tip.pdf}
+    \item arXiv: \url{https://arxiv.org/abs/1605.05034}
+\end{itemize}
+
+This paper was selected because it is published in IEEE Transactions on Image Processing and is closely related to the selected project topic. It does not depend on deep learning or large training data, so it is suitable for a Digital Image Processing course project. The paper uses illumination estimation, filtering, enhancement, and restoration concepts that match the course contents.
+
+In this project, we implemented the following parts from the selected paper:
+\begin{itemize}
+    \item Initial illumination estimation using the maximum RGB channel.
+    \item Illumination refinement using guided filtering as an edge-preserving approximation.
+    \item Image reconstruction using illumination correction.
+    \item Comparison with histogram equalization, CLAHE, gamma correction, and Retinex.
+    \item Improved LIME using denoising, adaptive gamma, and CLAHE.
+\end{itemize}
+
+\section{Literature Review}
+Several classical techniques are used for image enhancement. Global histogram equalization improves contrast by redistributing image intensities over the full range. It is simple and fast, but it can over-enhance some regions and may produce unnatural results. CLAHE improves this idea by applying histogram equalization locally and limiting contrast amplification. This usually gives better local contrast, but it still needs careful parameter tuning.
+
+Gamma correction is another common method for brightness improvement. It applies a nonlinear mapping to pixel values and can brighten dark images quickly. However, it does not estimate the actual illumination of the scene. Retinex-based methods are more advanced because they model an image as a combination of illumination and reflectance. These methods can improve low-light images effectively, but their output depends strongly on parameters such as Gaussian scale.
+
+The LIME method estimates an illumination map directly from the image and then refines it before enhancement. This makes it more structured than simple histogram methods. Table~\ref{tab:literature} summarizes the comparison of related techniques.
+
+\begin{table}[htbp]
+\caption{Comparison of Related Enhancement Techniques}
+\label{tab:literature}
+\centering
+\begin{tabular}{p{1.8cm} p{2.2cm} p{2.4cm}}
+\toprule
+\textbf{Method} & \textbf{Main Idea} & \textbf{Limitation} \\
+\midrule
+HE & Global intensity redistribution & May over-enhance and distort colors \\
+CLAHE & Local histogram equalization with clipping & May amplify noise if parameters are not tuned \\
+Gamma & Nonlinear brightness mapping & Does not estimate illumination \\
+Retinex & Illumination-reflectance model & Sensitive to scale selection \\
+LIME & Illumination map estimation and correction & Noise can still increase in very dark images \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Methodology}
+The methodology of this project follows the selected LIME paper. The input image is treated as a low-light RGB image. The algorithm first estimates how much illumination is present at each pixel, then refines this illumination map, and finally enhances the image using illumination correction.
+
+\subsection{Dataset Used}
+The project notebook supports two dataset options. First, real low-light images can be uploaded by the user in Google Colab. These may include images from a public dataset such as LOL or custom images captured using a mobile phone in dark rooms, streets, corridors, or parking areas. Second, if no real images are uploaded, the notebook generates synthetic low-light images with paired reference images. These synthetic images are only used for testing the code flow and should be replaced by real images for final submission.
+
+\subsection{LIME Illumination Estimation}
+For each pixel location $x$, the initial illumination map is estimated using the maximum value among the RGB channels:
+
+\begin{equation}
+\hat{T}(x) = \max \left( R(x), G(x), B(x) \right)
+\end{equation}
+
+This works because the brightest channel at a pixel gives a simple estimate of the local illumination. Dark pixels usually have a low value in all channels, while better illuminated pixels have at least one stronger channel.
+
+\subsection{Illumination Refinement}
+The raw illumination map may contain noise and texture details. In the original paper, the illumination map is refined using a structure-aware optimization model. In our implementation, guided filtering is used as a practical edge-preserving approximation. Guided filtering smooths the illumination map while keeping important edges, which helps avoid halo artifacts and preserves object boundaries.
+
+\subsection{Image Reconstruction}
+After obtaining the refined illumination map $T(x)$, the enhanced image is reconstructed as:
+
+\begin{equation}
+R(x) = \frac{I(x)}{T(x)^\gamma}
+\end{equation}
+
+where $I(x)$ is the input low-light image, $T(x)$ is the refined illumination map, and $\gamma$ controls enhancement strength. A smaller value of $\gamma$ usually gives stronger brightness enhancement.
+
+\subsection{Improved LIME}
+As an additional improvement, we extended the paper method using three simple steps. First, bilateral filtering is applied before enhancement to reduce low-light noise while preserving edges. Second, gamma is selected adaptively according to the average brightness of the input image. Third, CLAHE is applied on the luminance channel after LIME enhancement to improve local contrast. This improved version is compared separately with the original LIME implementation.
+
+\subsection{System Flow}
+The complete processing flow is:
+
+\begin{center}
+\fbox{
+\begin{minipage}{0.92\linewidth}
+Input low-light image $\rightarrow$ Estimate initial illumination map $\rightarrow$ Refine illumination map $\rightarrow$ Apply illumination correction $\rightarrow$ Generate LIME output $\rightarrow$ Apply denoising/adaptive gamma/CLAHE for improved LIME $\rightarrow$ Evaluate and compare results.
+\end{minipage}
+}
+\end{center}
+
+\section{Implementation}
+The project was implemented in Python using Google Colab. OpenCV was used for image reading, color conversion, histogram equalization, CLAHE, bilateral filtering, and guided-filter-style smoothing. NumPy was used for matrix operations and mathematical processing. Matplotlib and Seaborn were used for visualizations such as output images, histograms, CDF plots, and comparison graphs. Scikit-image was used for SSIM calculation.
+
+The implementation contains the following main modules inside the notebook:
+
+\begin{itemize}
+    \item Image upload and dataset preparation.
+    \item Baseline methods: HE, CLAHE, gamma correction, SSR, and MSR.
+    \item LIME paper implementation.
+    \item Improved LIME implementation.
+    \item Metric calculation and comparison tables.
+    \item Visual output comparison, histograms, and CDF graphs.
+\end{itemize}
+
+The experimental setup is simple and reproducible. The notebook can be run from top to bottom in Google Colab. If paired reference images are available, the notebook calculates MSE, PSNR, and SSIM. If reference images are not available, the notebook still calculates brightness, contrast, entropy, colorfulness, brightness gain, contrast gain, and runtime.
+
+\section{Results and Discussion}
+The output images are compared visually and quantitatively. Visual comparison helps identify whether dark regions become clearer, whether object boundaries are preserved, and whether the output appears natural. Histograms and CDF plots show how the intensity distribution changes after enhancement.
+
+Fig.~\ref{fig:visual_comparison} shows the visual comparison of the original low-light image and the enhanced outputs. The original image is very dark, so many details are difficult to observe. Global histogram equalization increases brightness, but it also produces unnatural contrast in some regions. CLAHE and gamma-based enhancement improve visibility to some extent. The LIME paper method improves the illuminated regions by estimating and correcting the illumination map. The improved LIME result gives a more balanced output by combining denoising, adaptive gamma, and CLAHE.
+
+\begin{figure*}[htbp]
+\centering
+\includegraphics[width=\textwidth]{visual_comparison.png}
+\caption{Visual comparison of low-light enhancement methods. The original image is very dark and contains hidden details. Global histogram equalization increases brightness but produces unnatural contrast. CLAHE and gamma-based methods improve visibility to some extent. The LIME paper method enhances the illuminated regions, while the improved LIME result gives a more balanced output with better local visibility and reduced harsh contrast.}
+\label{fig:visual_comparison}
+\end{figure*}
+
+Fig.~\ref{fig:cdf_comparison} shows the cumulative distribution function (CDF) of intensity values. The curve of the original image shows that most pixels are concentrated in the low-intensity region. After enhancement, the curves become more spread over the intensity range. This shows that the enhancement methods improve the brightness and contrast distribution. A wider and smoother intensity distribution usually means that more visual information is available in the output image.
+
+\begin{figure*}[htbp]
+\centering
+\includegraphics[width=\textwidth]{cdf_comparison.png}
+\caption{CDF comparison of the original image and enhanced outputs. The original image has most intensity values concentrated in the dark range, showing poor brightness distribution. The enhanced methods spread the intensity values over a wider range. This indicates improved brightness and contrast after enhancement, especially for LIME-based and CLAHE-based methods.}
+\label{fig:cdf_comparison}
+\end{figure*}
+
+Table~\ref{tab:metrics} shows the quantitative results generated by the notebook for the tested low-light image. Since no paired normal-light reference image was used for this experiment, MSE, PSNR, and SSIM are not available. Therefore, the comparison is based on no-reference metrics such as brightness, contrast, entropy, colorfulness, brightness gain, contrast gain, and runtime.
+
+\begin{table*}[htbp]
+\caption{Quantitative Comparison of Enhancement Methods for the Tested Image}
+\label{tab:metrics}
+\centering
+\begin{tabular}{lccccccc}
+\toprule
+\textbf{Method} & \textbf{Brightness} & \textbf{Contrast} & \textbf{Entropy} & \textbf{Colorfulness} & \textbf{B. Gain} & \textbf{C. Gain} & \textbf{Runtime (ms)} \\
+\midrule
+Global HE & 49.32 & 76.43 & 2.14 & 11.78 & 43.75 & 50.72 & 34.93 \\
+CLAHE YCrCb & 11.05 & 28.26 & 2.51 & 13.88 & 5.48 & 2.55 & 6.89 \\
+Gamma + CLAHE & 17.10 & 35.09 & 3.31 & 20.60 & 11.53 & 9.38 & 1.65 \\
+Single Scale Retinex & 81.00 & 33.88 & 6.82 & 33.85 & 75.43 & 8.17 & 31.38 \\
+Multi Scale Retinex & 58.93 & 34.38 & 5.98 & 37.45 & 53.37 & 8.67 & 168.31 \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+In general, histogram equalization improves contrast but may make the image look harsh. CLAHE gives better local contrast but may increase noise in dark areas. Gamma correction brightens the image, but it does not explicitly estimate illumination. Retinex methods can improve visibility but may create color shifts depending on parameters. LIME provides a better balance because it estimates illumination and uses it for enhancement. The improved LIME version is expected to give clearer local contrast because it combines denoising, adaptive gamma, and CLAHE.
+
+\section{Conclusion}
+This project successfully studies and implements a research-paper-based low-light enhancement method. The selected paper, LIME, provides a clear and meaningful approach based on illumination map estimation. The project implements the main paper methodology, compares it with classical enhancement methods, and adds a small improvement using denoising, adaptive gamma, and CLAHE.
+
+The main achievement of this work is that it connects theory from a research paper with practical image processing implementation. The notebook also provides visual and quantitative analysis, making the results easier to understand during viva. Future improvements can include using a larger real dataset, implementing the exact optimization model from the original LIME paper, comparing with more recent enhancement methods, and testing whether enhancement improves object detection in low-light surveillance images.
+
+\section*{Acknowledgment}
+The authors would like to thank the Digital Image Processing course instructor for providing the project guidelines and evaluation rubric.
+
+\begin{thebibliography}{00}
+
+\bibitem{lime}
+X. Guo, Y. Li, and H. Ling, ``LIME: Low-Light Image Enhancement via Illumination Map Estimation,'' \textit{IEEE Transactions on Image Processing}, vol. 26, no. 2, pp. 982--993, 2017.
+
+\bibitem{clahe}
+K. Zuiderveld, ``Contrast Limited Adaptive Histogram Equalization,'' in \textit{Graphics Gems IV}, Academic Press, 1994, pp. 474--485.
+
+\bibitem{retinex}
+E. H. Land, ``The Retinex Theory of Color Vision,'' \textit{Scientific American}, vol. 237, no. 6, pp. 108--128, 1977.
+
+\bibitem{retinexnet}
+W. Wei, W. Wang, W. Yang, and J. Liu, ``Deep Retinex Decomposition for Low-Light Enhancement,'' in \textit{British Machine Vision Conference}, 2018.
+
+\bibitem{opencv}
+OpenCV Documentation, ``Histograms - Histogram Equalization and CLAHE,'' Available: \url{https://docs.opencv.org/}.
+
+\end{thebibliography}
+
+\end{document}
